@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherNow - Modern Weather Forecast</title>
+    <link href="/output.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200">
+    <!-- Navbar -->
+    <nav class="navbar-blur">
+        <div class="nav-container">
+            <div class="flex items-center justify-between w-full">
+                <a href="#" class="nav-brand">
+                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">WeatherNow</span>
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-button md:hidden" aria-label="Toggle menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" 
+                        placeholder="Search location..." 
+                        class="search-input w-64 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        autocomplete="off">
+                        <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button id="theme-toggle" class="theme-toggle-container" aria-label="Toggle theme">
+                        <svg class="theme-icon sun-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm8-5a1 1 0 01-.707.293l-1 .001a1 1 0 110-2l1-.001a1 1 0 01.707 1.707zM4.293 15.707a1 1 0 010-1.414l1-1a1 1 0 111.414 1.414l-1 1a1 1 0 01-1.414 0zm0-11.414a1 1 0 011.414 0l1 1a1 1 0 01-1.414 1.414l-1-1a1 1 0 010-1.414zM10 5a5 5 0 100 10 5 5 0 000-10z"/>
+                        </svg>
+                        <svg class="theme-icon moon-icon" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-menu hidden md:hidden w-full mt-4">
+                <div class="relative mb-4">
+                    <input type="text" placeholder="Search location..." class="search-input w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </div>
+                <button id="theme-toggle-mobile" class="theme-toggle-container w-full justify-center" aria-label="Toggle theme">
+                    <svg class="theme-icon sun-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 13a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm8-5a1 1 0 01-.707.293l-1 .001a1 1 0 110-2l1-.001a1 1 0 01.707 1.707zM4.293 15.707a1 1 0 010-1.414l1-1a1 1 0 111.414 1.414l-1 1a1 1 0 01-1.414 0zm0-11.414a1 1 0 011.414 0l1 1a1 1 0 01-1.414 1.414l-1-1a1 1 0 010-1.414zM10 5a5 5 0 100 10 5 5 0 000-10z"/>
+                    </svg>
+                    <svg class="theme-icon moon-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div id="weather-alert" class="hidden">
+        <!-- Alert content will be injected here -->
+        </div>
+                <!-- Current Weather Card -->
+        <div class="lg:col-span-2 glass-card rounded-xl p-6">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold" data-city>Loading...</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Updated just now</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Humidity</p>
+                            <p class="font-semibold" data-humidity>--%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Wind</p>
+                            <p class="font-semibold" data-wind-speed>-- km/h</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">UV Index</p>
+                            <div class="flex items-baseline gap-2">
+                                <p class="font-semibold text-xl transition-colors" data-uv>--</p>
+                                <span class="text-sm text-gray-500 dark:text-gray-400" data-uv-level></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Pressure</p>
+                            <p class="font-semibold" data-pressure>-- hPa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Sunrise</p>
+                            <p class="font-semibold" data-sunrise>--:--</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-lg p-4">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Sunset</p>
+                            <p class="font-semibold" data-sunset>--:--</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Air Quality Index Card -->
+            <div class="glass-card rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Air Quality Index</h2>
+                <div class="mb-4">
+                    <div class="aqi-indicator mb-2"></div>
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                        <span>Good</span>
+                        <span>Moderate</span>
+                        <span>Poor</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold text-green-500 mb-2">42</div>
+                    <p class="text-gray-600 dark:text-gray-400">Good</p>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">CO</span>
+                        <span class="font-semibold" data-aqi-co>-- µg/m³</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">O₃</span>
+                        <span class="font-semibold" data-aqi-ozone>-- µg/m³</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">SO₂</span>
+                        <span class="font-semibold" data-aqi-sulfur>-- µg/m³</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Hourly Forecast -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Hourly Forecast</h2>
+            <div class="forecast-timeline flex space-x-4 overflow-x-auto pb-4">
+                <!-- Hourly items -->
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Now</p>
+                    <div class="text-3xl my-2">☀️</div>
+                    <p class="font-semibold">24°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">1 PM</p>
+                    <div class="text-3xl my-2">⛅</div>
+                    <p class="font-semibold">25°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">2 PM</p>
+                    <div class="text-3xl my-2">🌧️</div>
+                    <p class="font-semibold">23°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">3 PM</p>
+                    <div class="text-3xl my-2">🌧️</div>
+                    <p class="font-semibold">22°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">4 PM</p>
+                    <div class="text-3xl my-2">⛅</div>
+                    <p class="font-semibold">21°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">5 PM</p>
+                    <div class="text-3xl my-2">⛅</div>
+                    <p class="font-semibold">20°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">6 PM</p>
+                    <div class="text-3xl my-2">🌙</div>
+                    <p class="font-semibold">19°C</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 min-w-[100px] text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">7 PM</p>
+                    <div class="text-3xl my-2">🌙</div>
+                    <p class="font-semibold">18°C</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7-Day Forecast -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">7-Day Forecast</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
+                <!-- Day cards -->
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Mon</p>
+                    <div class="text-3xl my-2">☀️</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">24°</span>
+                        <span class="text-gray-600 dark:text-gray-400">18°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">10%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Tue</p>
+                    <div class="text-3xl my-2">⛅</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">23°</span>
+                        <span class="text-gray-600 dark:text-gray-400">17°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">20%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Wed</p>
+                    <div class="text-3xl my-2">🌧️</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">21°</span>
+                        <span class="text-gray-600 dark:text-gray-400">16°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">60%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Thu</p>
+                    <div class="text-3xl my-2">🌧️</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">20°</span>
+                        <span class="text-gray-600 dark:text-gray-400">15°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">70%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Fri</p>
+                    <div class="text-3xl my-2">⛅</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">22°</span>
+                        <span class="text-gray-600 dark:text-gray-400">16°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">30%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Sat</p>
+                    <div class="text-3xl my-2">☀️</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">24°</span>
+                        <span class="text-gray-600 dark:text-gray-400">18°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">10%</p>
+                </div>
+                <div class="glass-card rounded-lg p-4 text-center">
+                    <p class="font-semibold">Sun</p>
+                    <div class="text-3xl my-2">☀️</div>
+                    <div class="flex justify-center space-x-2">
+                        <span class="font-semibold">25°</span>
+                        <span class="text-gray-600 dark:text-gray-400">19°</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">5%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weather Map -->
+                <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">Weather Map</h2>
+            <div class="glass-card rounded-xl overflow-hidden">
+                <div id="weather-map"></div>
+            </div>
+            <div class="flex gap-2 mt-4">
+                <button class="map-layer-btn active" data-layer="temp">Temperature</button>
+                <button class="map-layer-btn" data-layer="clouds">Clouds</button>
+                <button class="map-layer-btn" data-layer="precipitation">Precipitation</button>
+                <button class="map-layer-btn" data-layer="wind">Wind</button>
+            </div>
+        </div>
+
+        <!-- Additional Info Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Moon Phase -->
+            <div class="glass-card rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Moon Phase</h2>
+                <div class="text-center">
+                    <div class="text-6xl mb-4" data-moon-emoji>�</div>
+                    <p class="font-semibold" data-moon-phase>--</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400" data-moon-illumination>Illumination: --%</p>
+                </div>
+            </div>
+
+            <!-- Weather Article -->
+            <div class="glass-card rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Weather Insights</h2>
+                <article class="prose dark:prose-invert">
+                    <h3 class="text-lg font-semibold mb-2">Understanding Weather Patterns</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Learn about the fascinating science behind weather patterns and how they affect our daily lives. From high-pressure systems to low-pressure zones, discover the forces that shape our weather.</p>
+                    <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">Read more →</a>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 dark:bg-slate-950 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-xl font-bold text-blue-400">WeatherNow</h3>
+                    <p class="text-gray-400 text-sm">Your trusted weather companion</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-blue-400">About</a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400">Privacy</a>
+                    <a href="#" class="text-gray-400 hover:text-blue-400">Terms</a>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p class="text-gray-400 text-sm">&copy; 2024 WeatherNow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
