@@ -71,8 +71,10 @@ node server.js
 ## ⚒️ Tech
 - Node.js
 - Express
-- WeatherAPI
-- HTML, CSS, Tailwind, JavaScript
+- HTML
+- CSS
+- Tailwind
+- JavaScript
 
 ---
 
