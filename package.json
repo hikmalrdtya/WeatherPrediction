@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon backend/server.js",
     "build:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./src/input.css -o ./public/output.css --watch"
   },
   "keywords": [],
