@@ -92,4 +92,4 @@ Pull requests are very open. Open an issue if you have a bug or feature request!
 
 ## 💻 Contributor
 Special thanks to the contributors who helped with this project
-* @[farasalgh] (https://github.com/farasalgh)
+* [farasalgh](https://github.com/farasalgh)
