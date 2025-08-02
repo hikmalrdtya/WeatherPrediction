@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon backend/server.js",
-    "build:css": ".\\node_modules\\.bin\\tailwindcss.cmd -i ./src/input.css -o ./public/output.css --watch"
+    "start": "node backend/server.js",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css"
   },
   "keywords": [],
   "author": "",
